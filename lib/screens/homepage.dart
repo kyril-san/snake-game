@@ -5,6 +5,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import 'package:snake_game/screens/home_widgets.dart';
+
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
 
@@ -17,6 +19,7 @@ int _countscore = 0;
 enum Move { up, down, right, left }
 
 Move move = Move.down;
+
 //* TO RESPAWN THE FOOD AT A DIFFERENT LOCATION
 double foodx = Random().nextDouble() * -0.9;
 double foody = Random().nextDouble() * -0.9;
@@ -25,21 +28,33 @@ double foody = Random().nextDouble() * -0.9;
 double snakex = 0;
 double snakey = 0;
 
-//* TO CHECK IF THE GAME IS OVER SO THAT YOU CAN DISPLAY A GAMEOVER PROMPT
+List<double> snakelist = [0, 0];
+
+//* TO CHECK IF THE GAME IS OVER OR PAUSEDSO THAT YOU CAN DISPLAY A GAMEOVER PROMPT
 bool gameover = false;
+bool ispaused = false;
+bool hasgameStarted = false;
 
 class _MyHomePageState extends State<MyHomePage> {
   //* TO START THE GAME
   void _startgame() {
-    Timer.periodic(Duration(milliseconds: 100), (timer) {
+    Timer.periodic(Duration(milliseconds: 100), (timer) async {
       _updategame();
       _didsnakeeatfood();
 
       checkforgameover();
 
-      if (gameover) {
+      if (gameover || ispaused) {
         timer.cancel();
+      } else {
+        timer.isActive;
       }
+    });
+  }
+
+  void restart() {
+    setState(() {
+      _startgame();
     });
   }
 
@@ -65,14 +80,14 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   //* TO CHECK FOR GAME OVER
-  bool checkforgameover() {
-    if (snakex >= 0.99 || snakex <= -0.99 || snakey >= 1 || snakey <= -1) {
+  void checkforgameover() {
+    if (snakex >= 1 || snakex <= -1 || snakey >= 1 || snakey <= -1) {
       setState(() {
         gameover = true;
       });
-      return true;
+    } else {
+      gameover = false;
     }
-    return false;
   }
 
 //* TO SEE IF THE SNAKE EATS THE FOOD
@@ -93,89 +108,166 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
+
     _startgame();
   }
 
+//* THE WIDGET BUILDER
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: GestureDetector(
-          onHorizontalDragUpdate: (details) {
-            if (details.delta.dx <= -1.0) {
-              setState(() {
-                move = Move.left;
-              });
-            } else if (details.delta.dx >= 1.0) {
-              setState(() {
-                move = Move.right;
-              });
-            }
-          },
-          onVerticalDragUpdate: (details) {
-            if (details.delta.dy < -0.5) {
-              setState(() {
-                move = Move.down;
-              });
-            } else if (details.delta.dy > 0.5) {
-              setState(() {
-                move = Move.up;
-              });
-            }
-          },
-          child: Container(
-            width: MediaQuery.sizeOf(context).width * 1,
-            height: MediaQuery.sizeOf(context).height,
-            color: Colors.deepPurple[200],
-            child: Stack(
-              children: [
-                Align(
-                    alignment: Alignment.topCenter,
-                    child: Text(
-                      'The Score is $_countscore',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )),
-                gameover
-                    ? Align(
-                        alignment: Alignment.center,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'G A M E O V E R',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w900, fontSize: 24),
-                            ),
-                            Text(
-                              'FINAL SCORE  IS $_countscore',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ))
-                    : Container(),
-                Align(
-                  alignment: Alignment(snakex, snakey),
-                  child: Container(
-                    height: 15,
-                    width: 15,
-                    decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(4)),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment(foodx, foody),
-                  child: Container(
-                    height: 10,
-                    width: 10,
-                    decoration: BoxDecoration(
-                        color: Colors.green, shape: BoxShape.circle),
-                  ),
-                )
-              ],
+      backgroundColor: Colors.grey.shade900,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Align(
+                alignment: Alignment.topRight,
+                child: Text(
+                  'The Score is $_countscore',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white),
+                )),
+          ),
+          GestureDetector(
+            onHorizontalDragUpdate: (details) {
+              if (details.delta.dx <= -1.0) {
+                setState(() {
+                  move = Move.left;
+                });
+              } else if (details.delta.dx >= 1.0) {
+                setState(() {
+                  move = Move.right;
+                });
+              }
+            },
+            onVerticalDragUpdate: (details) {
+              if (details.delta.dy < -0.5) {
+                setState(() {
+                  move = Move.down;
+                });
+              } else if (details.delta.dy > 0.5) {
+                setState(() {
+                  move = Move.up;
+                });
+              }
+            },
+            child: Container(
+              width: MediaQuery.sizeOf(context).width * 0.95,
+              height: MediaQuery.sizeOf(context).height * 0.85,
+              color: Colors.deepPurple[200],
+              child: hasgameStarted
+                  ? Stack(
+                      children: [
+                        gameover
+                            ? Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      'G A M E O V E R',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w900,
+                                          fontSize: 24),
+                                    ),
+                                    Text(
+                                      'FINAL SCORE  IS $_countscore',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                  ],
+                                ))
+                            : Container(),
+                        gameover
+                            ? Container()
+                            : Align(
+                                alignment: Alignment(snakex, snakey),
+                                child: Container(
+                                  height: 15,
+                                  width: 15,
+                                  decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius: BorderRadius.circular(4)),
+                                ),
+                              ),
+                        gameover
+                            ? Container()
+                            : Align(
+                                alignment: Alignment(foodx, foody),
+                                child: Container(
+                                  height: 10,
+                                  width: 10,
+                                  decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      shape: BoxShape.circle),
+                                ),
+                              )
+                      ],
+                    )
+                  : Center(
+                      child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              hasgameStarted = true;
+                              _startgame();
+                            });
+                          },
+                          child: Text(
+                            'C L I C K  H E R E  T O  S T A R T',
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold),
+                          )),
+                    ),
             ),
           ),
-        ),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  style: TextButton.styleFrom(backgroundColor: Colors.white),
+                  onPressed: () {
+                    setState(() {
+                      ispaused = !ispaused;
+                      _startgame();
+                    });
+                  },
+                  child: Text(ispaused ? 'Play' : 'Pause'),
+                ),
+                SizedBox(width: 20),
+                gameover
+                    ? TextButton(
+                        style:
+                            TextButton.styleFrom(backgroundColor: Colors.white),
+                        onPressed: () async {
+                          await showRestartDialog(
+                            context,
+                            onyestap: () {
+                              setState(() {
+                                _countscore = 0;
+                                snakex = 0;
+                                snakey = 0;
+                                gameover = false;
+
+                                hasgameStarted = false;
+                                Navigator.pop(context);
+                              });
+                            },
+                          );
+                        },
+                        child: Text('Restart'),
+                      )
+                    : Container(),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
