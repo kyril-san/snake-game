@@ -12,6 +12,8 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
+int _countscore = 0;
+
 enum Move { up, down, right, left }
 
 Move move = Move.down;
@@ -27,49 +29,65 @@ double snakey = 0;
 bool gameover = false;
 
 class _MyHomePageState extends State<MyHomePage> {
+  //* TO START THE GAME
   void _startgame() {
-    Timer.periodic(Duration(milliseconds: 500), (timer) {
+    Timer.periodic(Duration(milliseconds: 100), (timer) {
       _updategame();
+      _didsnakeeatfood();
+
+      checkforgameover();
 
       if (gameover) {
         timer.cancel();
       }
     });
-    // _updategame();
   }
 
+//* TO UPDATE THE MOVEMENT OF THE GAME
   void _updategame() {
-    if (move == Move.left) {
-      setState(() {
-        snakex -= 0.1;
-        checkforgameover();
-      });
-    } else if (move == Move.right) {
-      setState(() {
-        snakex += 0.1;
-        checkforgameover();
-      });
-    } else if (move == Move.up) {
-      setState(() {
-        snakey += 0.1;
-        checkforgameover();
-      });
-    } else if (move == Move.down) {
-      setState(() {
-        snakey -= 0.1;
-        checkforgameover();
-      });
-    }
+    setState(() {
+      if (move == Move.left) {
+        snakex -= 0.02;
+        // checkforgameover();
+      } else if (move == Move.right) {
+        snakex += 0.02;
+        // checkforgameover();
+      } else if (move == Move.up) {
+        snakey += 0.01;
+        // checkforgameover();
+      } else if (move == Move.down) {
+        snakey -= 0.01;
+        // checkforgameover();
+      } else {
+        return;
+      }
+    });
   }
 
+  //* TO CHECK FOR GAME OVER
   bool checkforgameover() {
-    if (snakex >= 0.9 || snakex <= -0.9 || snakey >= 0.9 || snakey <= -0.9) {
+    if (snakex >= 0.99 || snakex <= -0.99 || snakey >= 1 || snakey <= -1) {
       setState(() {
         gameover = true;
       });
       return true;
     }
     return false;
+  }
+
+//* TO SEE IF THE SNAKE EATS THE FOOD
+  void _didsnakeeatfood() {
+    final finalfoodx = foodx.toStringAsFixed(1);
+    final finalfoody = foody.toStringAsFixed(1);
+    final finalsnakex = snakex.toStringAsFixed(1);
+    final finalsnakey = snakey.toStringAsFixed(1);
+    if (finalsnakex == finalfoodx && finalsnakey == finalfoody) {
+      setState(() {
+        _countscore++;
+        foodx = Random().nextDouble() * -0.9;
+        foody = Random().nextDouble() * -0.9;
+      });
+    }
   }
 
   @override
@@ -106,17 +124,43 @@ class _MyHomePageState extends State<MyHomePage> {
             }
           },
           child: Container(
-            width: MediaQuery.sizeOf(context).width,
+            width: MediaQuery.sizeOf(context).width * 1,
             height: MediaQuery.sizeOf(context).height,
             color: Colors.deepPurple[200],
             child: Stack(
               children: [
                 Align(
+                    alignment: Alignment.topCenter,
+                    child: Text(
+                      'The Score is $_countscore',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    )),
+                gameover
+                    ? Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'G A M E O V E R',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.w900, fontSize: 24),
+                            ),
+                            Text(
+                              'FINAL SCORE  IS $_countscore',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ))
+                    : Container(),
+                Align(
                   alignment: Alignment(snakex, snakey),
                   child: Container(
-                    height: 30,
-                    width: 20,
-                    color: Colors.red,
+                    height: 15,
+                    width: 15,
+                    decoration: BoxDecoration(
+                        color: Colors.red,
+                        borderRadius: BorderRadius.circular(4)),
                   ),
                 ),
                 Align(
