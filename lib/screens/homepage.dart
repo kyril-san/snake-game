@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'package:snake_game/screens/home_widgets.dart';
 
@@ -15,6 +16,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 int _countscore = 0;
+double height = 5;
 
 enum Move { up, down, right, left }
 
@@ -28,12 +30,11 @@ double foody = Random().nextDouble() * -0.9;
 double snakex = 0;
 double snakey = 0;
 
-List<double> snakelist = [0, 0];
-
 //* TO CHECK IF THE GAME IS OVER OR PAUSEDSO THAT YOU CAN DISPLAY A GAMEOVER PROMPT
 bool gameover = false;
 bool ispaused = false;
 bool hasgameStarted = false;
+bool isvertical = false;
 
 class _MyHomePageState extends State<MyHomePage> {
   //* TO START THE GAME
@@ -62,16 +63,23 @@ class _MyHomePageState extends State<MyHomePage> {
   void _updategame() {
     setState(() {
       if (move == Move.left) {
+        // snakeList.removeLast();
         snakex -= 0.02;
+        isvertical = false;
+        // snakeList.first = snakex;
+        // snakeList.add(0.01);
         // checkforgameover();
       } else if (move == Move.right) {
         snakex += 0.02;
+        isvertical = false;
         // checkforgameover();
       } else if (move == Move.up) {
         snakey += 0.01;
+        isvertical = true;
         // checkforgameover();
       } else if (move == Move.down) {
         snakey -= 0.01;
+        isvertical = true;
         // checkforgameover();
       } else {
         return;
@@ -99,6 +107,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (finalsnakex == finalfoodx && finalsnakey == finalfoody) {
       setState(() {
         _countscore++;
+        height += 15;
         foodx = Random().nextDouble() * -0.9;
         foody = Random().nextDouble() * -0.9;
       });
@@ -180,18 +189,28 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ],
                                 ))
                             : Container(),
+                        //! Snake
                         gameover
                             ? Container()
+                            // : ListView.builder(
+                            //     scrollDirection: Axis.vertical,
+                            //     shrinkWrap: true,
+                            //     clipBehavior: Clip.none,
+                            //     itemCount: snakeList.length,
+                            //     itemBuilder: (context, index) {
+                            //       final snakebody = snakeList;
+                            //       if (snakebody.contains(index)) {
                             : Align(
                                 alignment: Alignment(snakex, snakey),
                                 child: Container(
-                                  height: 15,
-                                  width: 15,
+                                  height: isvertical ? height : 5,
+                                  width: isvertical ? 5 : height,
                                   decoration: BoxDecoration(
                                       color: Colors.red,
                                       borderRadius: BorderRadius.circular(4)),
                                 ),
                               ),
+                        //! Food
                         gameover
                             ? Container()
                             : Align(
@@ -254,6 +273,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 snakex = 0;
                                 snakey = 0;
                                 gameover = false;
+                                height = 5;
 
                                 hasgameStarted = false;
                                 Navigator.pop(context);

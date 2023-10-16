@@ -26,3 +26,15 @@ Future showRestartDialog(BuildContext context,
         );
       });
 }
+
+class Snake {
+  final double x;
+  final double y;
+  const Snake(this.x, this.y);
+}
+
+List snakeList = [
+  Snake(0, 0),
+  Snake(0.01, 0.01),
+  Snake(0.02, 0.02),
+];
