@@ -38,8 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentscore = 0;
 
 //! Fixed number for the row and the total number or spaces
-  final int _rowsize = 10;
-  final int _totalnumberofboard = 120;
+  final int _rowsize = 20;
+  final int _totalnumberofboard = 600;
 
   //! Declare the food postion for testing
   int foodpos = 63;
@@ -57,7 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hasgamestarted = false;
   void startgame() async {
     direction = SnakeMovement.right;
-    Timer.periodic(Duration(milliseconds: 400), (timer) async {
+    Timer.periodic(Duration(milliseconds: 200), (timer) async {
       setState(() {
         hasgamestarted = true;
         _updatemovement();
@@ -80,7 +80,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _updatemovement() {
     switch (direction) {
       case SnakeMovement.right:
-        if (snakepos.last % _rowsize == 9) {
+        if (snakepos.last % _rowsize == _rowsize - 1) {
           gameover = true;
         } else {
           snakepos.add(snakepos.last + 1);
@@ -170,14 +170,13 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.grey[900],
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(),
-              child: Center(
-                child: Text(
-                  ' Your Score is $_currentscore',
-                  style: TextStyle(color: Colors.white, fontSize: 24),
-                ),
+          Container(
+            height: 100,
+            decoration: BoxDecoration(),
+            child: Center(
+              child: Text(
+                ' Your Score is $_currentscore',
+                style: TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
           ),
@@ -242,32 +241,31 @@ class _MyHomePageState extends State<MyHomePage> {
                         }),
                   ),
           ),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(),
-              child: Row(
-                mainAxisAlignment: gameover
-                    ? MainAxisAlignment.center
-                    : MainAxisAlignment.spaceEvenly,
-                children: [
-                  gameover
-                      ? Container()
-                      : bottomactionbutton(context,
-                          text: _isgamepaused ? 'Play' : 'Pause', onpress: () {
-                          setState(() {
-                            _isgamepaused = !_isgamepaused;
-                            //! To Continue the game once it is Paused
-                            if (!_isgamepaused) {
-                              startgame();
-                            }
-                          });
-                        }),
-                  bottomactionbutton(context,
-                      text: hasgamestarted ? 'Restart' : 'Start', onpress: () {
-                    hasgamestarted ? restartgame() : startgame();
-                  }),
-                ],
-              ),
+          Container(
+            height: 100,
+            decoration: BoxDecoration(),
+            child: Row(
+              mainAxisAlignment: gameover
+                  ? MainAxisAlignment.center
+                  : MainAxisAlignment.spaceEvenly,
+              children: [
+                gameover
+                    ? Container()
+                    : bottomactionbutton(context,
+                        text: _isgamepaused ? 'Play' : 'Pause', onpress: () {
+                        setState(() {
+                          _isgamepaused = !_isgamepaused;
+                          //! To Continue the game once it is Paused
+                          if (!_isgamepaused) {
+                            startgame();
+                          }
+                        });
+                      }),
+                bottomactionbutton(context,
+                    text: hasgamestarted ? 'Restart' : 'Start', onpress: () {
+                  hasgamestarted ? restartgame() : startgame();
+                }),
+              ],
             ),
           )
         ],
