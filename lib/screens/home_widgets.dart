@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
-
 import 'package:flutter/material.dart';
 
 Future<void> showRestartDialog(BuildContext context,
@@ -8,19 +6,19 @@ Future<void> showRestartDialog(BuildContext context,
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("Confirm Restart"),
-          content: Text("Are you sure you want to Restart"),
+          title: const Text("Confirm Restart"),
+          content: const Text("Are you sure you want to Restart"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             TextButton(
               onPressed: onyestap,
-              child: Text('Yes'),
+              child: const Text('Yes'),
             ),
           ],
         );
@@ -31,8 +29,8 @@ bottomactionbutton(BuildContext context,
     {required String text, required Function()? onpress}) {
   return TextButton(
     style: TextButton.styleFrom(
-      fixedSize: Size(90, 20),
-      shape: StadiumBorder(),
+      fixedSize: const Size(90, 20),
+      shape: const StadiumBorder(),
       backgroundColor: Colors.white,
     ),
     onPressed: onpress,
@@ -42,7 +40,7 @@ bottomactionbutton(BuildContext context,
 
 reuseablecontainer({required Color color}) {
   return Container(
-    margin: EdgeInsets.all(2),
+    margin: const EdgeInsets.all(2),
     decoration: BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(3),
@@ -56,14 +54,14 @@ Future<void> gameOverDialog(BuildContext context,
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text("G A M E O V E R"),
+          title: const Text("G A M E O V E R"),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text("YOUR SCORE IS $text"),
-              SizedBox(height: 30),
-              Text("Click the Restart Button to Restart the Game"),
+              const SizedBox(height: 30),
+              const Text("Click the Restart Button to Restart the Game"),
             ],
           ),
           actions: [
@@ -71,12 +69,12 @@ Future<void> gameOverDialog(BuildContext context,
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
             ),
-            SizedBox(width: 10),
+            const SizedBox(width: 10),
             TextButton(
               onPressed: ontap,
-              child: Text('Restart'),
+              child: const Text('Restart'),
             ),
           ],
         );

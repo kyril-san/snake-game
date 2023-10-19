@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
-
 import 'dart:async';
 import 'dart:math';
 
@@ -57,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   bool hasgamestarted = false;
   void startgame() async {
     direction = SnakeMovement.right;
-    Timer.periodic(Duration(milliseconds: 200), (timer) async {
+    Timer.periodic(const Duration(milliseconds: 200), (timer) async {
       setState(() {
         hasgamestarted = true;
         _updatemovement();
@@ -172,11 +170,11 @@ class _MyHomePageState extends State<MyHomePage> {
         children: [
           Container(
             height: 100,
-            decoration: BoxDecoration(),
+            decoration: const BoxDecoration(),
             child: Center(
               child: Text(
                 ' Your Score is $_currentscore',
-                style: TextStyle(color: Colors.white, fontSize: 24),
+                style: const TextStyle(color: Colors.white, fontSize: 24),
               ),
             ),
           ),
@@ -186,17 +184,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 ? Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         "G A M E O V E R",
                         style: TextStyle(color: Colors.red, fontSize: 30.0),
                       ),
-                      SizedBox(height: 30),
+                      const SizedBox(height: 30),
                       Text(
                         "YOUR SCORE IS $_currentscore",
-                        style: TextStyle(color: Colors.white, fontSize: 30.0),
+                        style: const TextStyle(color: Colors.white, fontSize: 30.0),
                       ),
-                      SizedBox(height: 30),
-                      Text(
+                      const SizedBox(height: 30),
+                      const Text(
                         "Click the Restart Button to Restart the Game",
                         style: TextStyle(
                           color: Colors.white,
@@ -226,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       }
                     },
                     child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: _totalnumberofboard,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                             crossAxisCount: _rowsize),
@@ -243,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             height: 100,
-            decoration: BoxDecoration(),
+            decoration: const BoxDecoration(),
             child: Row(
               mainAxisAlignment: gameover
                   ? MainAxisAlignment.center
